@@ -1,0 +1,13 @@
+{
+  "name": "workphone-up",
+  "profile": "up",
+  "regions": ["us-west-2"],
+  "lambda": {
+    "memory": 256
+  },
+  "environment": {
+  },
+  "cors": {
+    "enable": true
+  },
+}
