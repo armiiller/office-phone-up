@@ -4,6 +4,7 @@
   "description": "This project is intended to be a simple work phone for businesses.",
   "main": "index.js",
   "dependencies": {
+    "aws-sdk": "^2.176.0",
     "aws-sns-publish": "^3.1.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
