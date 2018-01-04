@@ -1,8 +1,11 @@
+var debug = require('debug')('config');
 const parse_result = require('dotenv').config();
 
 if(parse_result.error){
-  throw parse_result.error;
+  debug(parse_result.error);
 }
+
+const _ = require('underscore');
 
 var hash = {};
 
@@ -12,6 +15,8 @@ hash.runtime.server          = true;
 hash.runtime.port            = process.env.PORT || 3000;
 hash.runtime.environment     = process.env.NODE_ENV || 'local';
 hash.runtime.simulate_time   = process.env.SIMULATE_TIME || null;
+hash.runtime.stage           = process.env.UP_STAGE || null;
+hash.runtime.apibaseurl      = process.env.APIBASEURL || null;
 
 // company settings
 hash.companyname             = process.env.COMPANYNAME || "our";
@@ -26,7 +31,7 @@ hash.hour_friendly           = process.env.HOUR_FRIENDLY || '8 AM to 5 PM';
 hash.timezone                = process.env.TIMEZONE || "America/Los_Angeles";
 
 // route handlers
-hash.incomingcallurl         = process.env.INCOMINGCALLURL || '/'
+hash.incomingcallurl         = process.env.INCOMINGCALLURL || '/';
 hash.recordingstatuscallback = process.env.RECORDINGSTATUSURL || '/recordstatus';
 hash.recordurl               = process.env.RECORDURL || '/record';
 
@@ -40,6 +45,11 @@ hash.dialtimeout             = process.env.DIALTIMEOUT ? parseInt(process.env.DI
 hash.messagemaxlength        = process.env.MESSAGEMAXLENGTH ? parseInt(process.env.MESSAGEMAXLENGTH) : 30;
 
 // SNS settings
-hash.snsarn                  - process.env.SNSARN || null;
+hash.snsarn                  = process.env.SNSARN || null;
+
+hash.twilio                  = {};
+hash.twilio.authtoken        = process.env.TWILIO_AUTH_TOKEN || null;
+
+debug(hash);
 
 module.exports = hash;
