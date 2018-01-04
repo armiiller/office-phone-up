@@ -1,7 +1,7 @@
 const parse_result = require('dotenv').config();
 
 if(parse_result.error){
-  throw result.error;
+  throw parse_result.error;
 }
 
 var hash = {};
