@@ -14,14 +14,14 @@ const entity = class workphone extends base {
   incomingcall(req, res, next){
     var twiml = new VoiceReponse();
 
-    var now = moment().tz(config.timezone);
+    var now = moment(config.runtime.simulate_time).tz(config.timezone);
     var day = now.day();
     var hour = now.hour();
 
     if(config.number && _.contains(config.days, day) && (hour >= config.open && hour < config.close)){
-      twiml.dial(number, {action: config.recordurl, timeout: config.dialtimeout});
+      twiml.dial(config.number, {action: config.recordurl, timeout: config.dialtimeout});
     } else {
-      if(voiceurl){
+      if(config.voiceurl){
         twiml.play(config.voiceurl)
       } else {
         twiml.say(`Hi! You've reached ${config.companyname} headquarters. We are currently closed. Our hours of operation are ${config.days_friendly} ${config.hour_friendly}. Please leave a message after the beep.`, { voice: 'man' });
@@ -56,7 +56,7 @@ const entity = class workphone extends base {
     }
 
     res.header('Content-Type', 'text/xml');
-    res.send(twiml.toString());
+    res.status(200).send(twiml.toString());
   }
 
   recordstatus(req, res, next){
@@ -65,7 +65,6 @@ const entity = class workphone extends base {
     var p = Promise.resolve(true);
     if(snsarn){
       p = snsPublish(`New Voicemail: ${req.body.RecordingUrl}`, {arn: snsarn, subject: 'New Voicemail'});
-
     }
 
     // Must finish all processing before we send the response (An Up thing)

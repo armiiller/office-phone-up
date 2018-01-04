@@ -1,4 +1,8 @@
-require('dotenv').config();
+const parse_result = require('dotenv').config();
+
+if(parse_result.error){
+  throw result.error;
+}
 
 var hash = {};
 
@@ -7,6 +11,7 @@ hash.runtime                 = {};
 hash.runtime.server          = true;
 hash.runtime.port            = process.env.PORT || 3000;
 hash.runtime.environment     = process.env.NODE_ENV || 'local';
+hash.runtime.simulate_time   = process.env.SIMULATE_TIME || null;
 
 // company settings
 hash.companyname             = process.env.COMPANYNAME || "our";

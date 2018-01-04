@@ -26,4 +26,8 @@ app.post(config.incomingcallurl, (req, res, next) => { workphone_controller.inco
 app.post(config.recordurl, (req, res, next) => { workphone_controller.record(req, res, next); });
 app.post(config.recordingstatuscallback, (req, res, next) => { workphone_controller.recordstatus(req, res, next); });
 
+app.use(function(req, res, next){
+  res.status(404).send();
+});
+
 module.exports = app;
