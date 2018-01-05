@@ -1,4 +1,5 @@
-var debug = require('debug')('routes');
+var debug = require('./debug')('routes');
+var debug_headers = require('./debug')('routes:headers');
 const config = require('./config');
 const controllers = require('./controllers');
 
@@ -22,7 +23,7 @@ const twilio_validate = function(path){
 const workphone_controller = new controllers.workphone();
 
 var middleware_print_path = function(req, res, next){
-  //debug(req.headers);
+  debug_headers(req.headers);
   debug(`${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`);
   next();
 }

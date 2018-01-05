@@ -1,4 +1,6 @@
-var debug = require('debug')('config');
+// call the actual module here so we don't have a circular dependancy
+var debugprefix = process.env.DEBUGPREFIX || 'workphone-up';
+var debug = require('debug')(`${debugprefix}:config`);
 const parse_result = require('dotenv').config();
 
 if(parse_result.error){
@@ -17,6 +19,7 @@ hash.runtime.environment     = process.env.NODE_ENV || 'local';
 hash.runtime.simulate_time   = process.env.SIMULATE_TIME || null;
 hash.runtime.stage           = process.env.UP_STAGE || null;
 hash.runtime.apibaseurl      = process.env.APIBASEURL || null;
+hash.runtime.debugprefix     = debugprefix;
 
 // company settings
 hash.companyname             = process.env.COMPANYNAME || "our";

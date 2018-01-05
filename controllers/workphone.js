@@ -1,5 +1,6 @@
-var debug = require('debug')('workphone');
 var config = require('../config');
+var debug = require('../debug')('workphone');
+var debug_twilio = require('../debug')('workphone:twilio');
 var base = require('./base');
 
 const moment = require('moment-timezone');
@@ -31,6 +32,8 @@ const entity = class workphone extends base {
   }
 
   incomingcall(req, res, next){
+    debug_twilio(req.body);
+
     var twiml = new VoiceReponse();
 
     // moment() and moment(null) are not the same
@@ -63,25 +66,23 @@ const entity = class workphone extends base {
   }
 
   record(req, res, next){
+    debug_twilio(req.body);
     var twiml = new VoiceReponse();
 
-    switch(req.body.DialCallStatus){
-      case 'no-answer':
-        if(config.noanswerurl){
-          twiml.play(config.noanswerurl);
-        }else {
-          twiml.say("Sorry we couldn't get to the phone, please leave a message after the beep.");
-        }
-        twiml.record({ maxLength: config.messagemaxlength, recordingStatusCallback: toAbsoluteURL(config.recordingstatuscallback)});
-        break;
-      default:
-        if(config.thanksformessageurl){
-          twiml.play(config.thanksformessageurl);
-        } else {
-          twiml.say("Thanks for your message! We will get back to you soon. Goodbye.");
-        }
-        twiml.hangup();
-        break;
+    if(req.body.DialCallStatus == 'no-answer'){
+      if(config.noanswerurl){
+        twiml.play(config.noanswerurl);
+      }else {
+        twiml.say("Sorry we couldn't get to the phone, please leave a message after the beep.");
+      }
+      twiml.record({ maxLength: config.messagemaxlength, recordingStatusCallback: toAbsoluteURL(config.recordingstatuscallback)});
+    } else if (req.body.RecordingUrl){
+      if(config.thanksformessageurl){
+        twiml.play(config.thanksformessageurl);
+      } else {
+        twiml.say("Thanks for your message! We will get back to you soon. Goodbye.");
+      }
+      twiml.hangup();
     }
 
     res.header('Content-Type', 'text/xml');
@@ -89,8 +90,9 @@ const entity = class workphone extends base {
   }
 
   recordstatus(req, res, next){
+    debug_twilio(req.body);
     var snsarn = config.snsarn;
-    console.log('snsarn %s', snsarn);
+    debug('snsarn %s', snsarn);
 
     var p = Promise.resolve(true);
     if(snsarn){
