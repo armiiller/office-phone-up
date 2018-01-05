@@ -6,6 +6,7 @@ var base = require('./base');
 const moment = require('moment-timezone');
 const _ = require('underscore');
 const VoiceReponse = require('twilio').twiml.VoiceResponse;
+const MessageResponse = require('twilio').twiml.MessagingResponse;
 const snsPublish = require('aws-sns-publish');
 const isAbsoluteUrl = require('is-absolute-url');
 const UrlJoin = require('url-join');
@@ -29,6 +30,28 @@ const toAbsoluteURL = function(str){
 const entity = class workphone extends base {
   constructor(){
     super();
+  }
+
+  incomingsms(req, res, next){
+    debug_twilio(req.body);
+    res.header('Content-Type', 'text/xml');
+    var from = req.body.From;
+    var body = req.body.Body;
+    var message = `New SMS: ${from} ${body}`;
+    if(config.number){
+      var twiml = new MessageResponse();
+      twiml.message(message, {to: config.number});
+      res.status(200).send(twiml.toString());
+    } else if (config.snsarn) {
+      var p = snsPublish(message, {arn: config.snsarn, subject: 'New SMS'});
+
+      // Must finish all processing before we send the response (An Up thing)
+      p.then(function(result){
+        res.status(200).send();
+      });
+    } else {
+      res.status(200).send();
+    }
   }
 
   incomingcall(req, res, next){

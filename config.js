@@ -35,6 +35,7 @@ hash.timezone                = process.env.TIMEZONE || "America/Los_Angeles";
 
 // route handlers
 hash.incomingcallurl         = process.env.INCOMINGCALLURL || '/';
+hash.incomingsmsurl          = process.env.INCOMINGSMSURL || '/sms';
 hash.recordingstatuscallback = process.env.RECORDINGSTATUSURL || '/recordstatus';
 hash.recordurl               = process.env.RECORDURL || '/record';
 

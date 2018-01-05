@@ -40,6 +40,7 @@ app.use(middleware_print_path);
 app.post(config.incomingcallurl, twilio_validate(config.incomingcallurl), (req, res, next) => { workphone_controller.incomingcall(req, res, next); });
 app.post(config.recordurl, twilio_validate(config.recordurl), (req, res, next) => { workphone_controller.record(req, res, next); });
 app.post(config.recordingstatuscallback, twilio_validate(config.recordingstatuscallback), (req, res, next) => { workphone_controller.recordstatus(req, res, next); });
+app.post(config.incomingsmsurl, twilio_validate(config.incomingsmsurl), (req, res, next) => { workphone_controller.incomingsms(req, res, next); });
 
 app.use(function(req, res, next){
   res.status(404).send();
