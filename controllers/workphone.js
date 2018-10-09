@@ -18,6 +18,7 @@ const fullUrl = function(req){
     host: req.get('host'),
     pathname: req.originalUrl
   });
+  debug(`formatted_url %s`, formatted_url);
 
   var stages = ["production", "staging", "development"];
   for(var i = 0; i < stages.length; i++){
