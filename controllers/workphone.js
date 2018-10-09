@@ -11,7 +11,25 @@ const snsPublish = require('aws-sns-publish');
 const isAbsoluteUrl = require('is-absolute-url');
 const UrlJoin = require('url-join');
 
-const toAbsoluteURL = function(str){
+const fullUrl = function(req){
+  var url = url.format({
+    protocol: req.protocol,
+    host: req.get('host'),
+    pathname: req.originalUrl
+  });
+
+  var stages = ["production", "staging", "development"];
+  for(var i = 0; i < stages.length; i++){
+    var stage = stages[i];
+    var index = url.indexOf(`/${stage}`);
+    if(index !== -1){
+      return url.slice(0, index);
+    }
+  }
+  return url;
+}
+
+const toAbsoluteURL = function(str, req){
   if(isAbsoluteUrl(str)){
     debug('Skipping conversion to relative url. Was passed absolute: %s', str);
     return str;
@@ -23,7 +41,7 @@ const toAbsoluteURL = function(str){
     return joined;
   } else {
     debug('config.runtime.apibaseurl not set. Leaving as %s', str);
-    return str;
+    return UrlJoin(fullUrl(req), str);
   }
 };
 
@@ -70,7 +88,7 @@ const entity = class workphone extends base {
 
     if(config.number && _.contains(config.days, day) && (hour >= config.open && hour < config.close)){
       twiml.dial(config.number, {
-        action: toAbsoluteURL(config.recordurl),
+        action: toAbsoluteURL(config.recordurl, req),
         timeout: config.dialtimeout
       });
     } else {
@@ -81,7 +99,7 @@ const entity = class workphone extends base {
       }
       twiml.record({
         maxLength: config.messagemaxlength,
-        recordingStatusCallback: toAbsoluteURL(config.recordingstatuscallback)});
+        recordingStatusCallback: toAbsoluteURL(config.recordingstatuscallback, req)});
     }
 
     res.header('Content-Type', 'text/xml');
@@ -98,7 +116,7 @@ const entity = class workphone extends base {
       }else {
         twiml.say("Sorry we couldn't get to the phone, please leave a message after the beep.");
       }
-      twiml.record({ maxLength: config.messagemaxlength, recordingStatusCallback: toAbsoluteURL(config.recordingstatuscallback)});
+      twiml.record({ maxLength: config.messagemaxlength, recordingStatusCallback: toAbsoluteURL(config.recordingstatuscallback, req)});
     } else if (req.body.RecordingUrl){
       if(config.thanksformessageurl){
         twiml.play(config.thanksformessageurl);
