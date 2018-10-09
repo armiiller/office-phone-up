@@ -14,21 +14,11 @@ const UrlJoin = require('url-join');
 
 const fullUrl = function(req){
   var formatted_url = url.format({
-    protocol: req.protocol,
+    protocol: req.get("x-forwarded-proto"),
     host: req.get('host'),
     pathname: req.originalUrl
-  });
-  debug(`formatted_url %s`, formatted_url);
+  }) + req.get("x-stage");
 
-  var stages = ["production", "staging", "development"];
-  for(var i = 0; i < stages.length; i++){
-    var stage = stages[i];
-    var index = formatted_url.indexOf(`/${stage}`);
-    if(index !== -1){
-      formatted_url = formatted_url.slice(0, index + stage.length + 1);
-      break;
-    }
-  }
   debug(`fullUrl %s`, formatted_url);
   return formatted_url;
 }
