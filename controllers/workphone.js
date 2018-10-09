@@ -2,6 +2,7 @@ var config = require('../config');
 var debug = require('../debug')('workphone');
 var debug_twilio = require('../debug')('workphone:twilio');
 var base = require('./base');
+var url = require('url');
 
 const moment = require('moment-timezone');
 const _ = require('underscore');
@@ -12,7 +13,7 @@ const isAbsoluteUrl = require('is-absolute-url');
 const UrlJoin = require('url-join');
 
 const fullUrl = function(req){
-  var url = url.format({
+  var formatted_url = url.format({
     protocol: req.protocol,
     host: req.get('host'),
     pathname: req.originalUrl
@@ -21,12 +22,12 @@ const fullUrl = function(req){
   var stages = ["production", "staging", "development"];
   for(var i = 0; i < stages.length; i++){
     var stage = stages[i];
-    var index = url.indexOf(`/${stage}`);
+    var index = formatted_url.indexOf(`/${stage}`);
     if(index !== -1){
-      return url.slice(0, index);
+      return formatted_url.slice(0, index);
     }
   }
-  return url;
+  return formatted_url;
 }
 
 const toAbsoluteURL = function(str, req){
