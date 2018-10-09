@@ -34,7 +34,7 @@ const toAbsoluteURL = function(str, req){
     debug('converted %s to absolute url: %s', str, joined);
     return joined;
   } else {
-    debug('config.runtime.apibaseurl not set. Leaving as %s', str);
+    debug('config.runtime.apibaseurl not set. Getting full url with %s', str);
     return UrlJoin(fullUrl(req), str);
   }
 };
