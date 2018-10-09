@@ -15,7 +15,7 @@ const twilio_validate = function(path){
     config.twilio.authtoken,
     {
       validate: config.twilio.authtoken && config.runtime.apibaseurl ? true : false,
-      url: UrlJoin(config.runtime.apibaseurl, path)
+      url: config.runtime.apibaseurl ? UrlJoin(config.runtime.apibaseurl, path) : path
     }
   );
 };
