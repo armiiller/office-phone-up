@@ -24,7 +24,7 @@ const fullUrl = function(req){
     var stage = stages[i];
     var index = formatted_url.indexOf(`/${stage}`);
     if(index !== -1){
-      return formatted_url.slice(0, index);
+      return formatted_url.slice(0, index + stage.length + 1);
     }
   }
   return formatted_url;
